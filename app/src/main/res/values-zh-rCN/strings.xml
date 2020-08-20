@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">贴贴图标</string>
+    <string name="readme">为您的图片添加一些有趣的图标</string>
+    <string name="button_start">让我们开始吧</string>
+    <string name="lab_main">贴贴图标</string>
+    <string name="lab_photo">图片处理</string>
+</resources>

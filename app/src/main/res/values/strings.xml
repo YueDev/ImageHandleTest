@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">Stickers</string>
+    <string name="readme">Stickers can make some icons into you image</string>
+    <string name="button_start">Start</string>
+    <string name="lab_main">Stickers</string>
+    <string name="lab_photo">ImageHandle</string>
+
+</resources>
