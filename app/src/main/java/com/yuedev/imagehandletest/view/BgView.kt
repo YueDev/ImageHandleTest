@@ -35,6 +35,9 @@ class BgView : View {
 
     //双指触摸，双指间的初始距离,因为有除法，初始1
     private var startDis = 1f
+    //双指上一次的距离
+    private var lastDis = 1f
+
     //双指缩放的角度
 
 
@@ -76,6 +79,7 @@ class BgView : View {
     }
 
     override fun onTouchEvent(event: MotionEvent?): Boolean {
+
         event ?: return false
 
         val x = event.x
@@ -93,44 +97,69 @@ class BgView : View {
                 } else return false
             }
             MotionEvent.ACTION_POINTER_DOWN -> {
+
                 //多点 这里只处理2点的情况
                 val newX = event.getX(1)
                 val newY = event.getY(1)
-                startDis = calDis(x, y, newX, newY)
+                val newDis  = calDis(x, y, newX, newY)
                 //如果两点的距离大于10f，则开始处理多点情况
-                if (pointInImage(newX, newY) && (startDis) > 10f) {
+                if (pointInImage(newX, newY) && (newDis) > 10f) {
                     mode = modeZoom
+                    startDis = newDis
+                    lastDis = newDis
+
+                    val pair = calMiddle(x, y, newX, newY)
+                    middlePoint.x = pair.first
+                    middlePoint.y = pair.second
                 } else {
-                    startDis = 1f
                     return false
                 }
             }
 
             MotionEvent.ACTION_MOVE -> {
 
-                if (mode == modeDrag) {
-                    val dx = x - lastPoint.x
-                    val dy = y - lastPoint.y
-                    imageMatrix.postTranslate(dx, dy)
-                    lastPoint.x = x
-                    lastPoint.y = y
+                when {
+                    //拖拽
+                    mode == modeDrag -> {
+                        val dx = x - lastPoint.x
+                        val dy = y - lastPoint.y
+                        imageMatrix.postTranslate(dx, dy)
+                        lastPoint.x = x
+                        lastPoint.y = y
+                    }
+
+                    //处理双指缩放
+                    modeZoom == modeZoom && event.pointerCount == 2 -> {
+
+                        val newDis = calDis(x, y, event.getX(1), event.getY(1))
+                        val scale = newDis / lastDis
+                        //注意缩放中心，用之前计算的middlePoint
+                        imageMatrix.postScale(scale, scale, middlePoint.x, middlePoint.y)
+                        lastDis = newDis
+                    }
+
+                    else -> {
+                        return false
+                    }
                 }
 
 
-
-                
             }
 
             MotionEvent.ACTION_UP -> {
-                return false
+
+                startDis = 1f
+                lastDis = 1f
+
+                mode = modeNone
             }
 
             MotionEvent.ACTION_POINTER_UP -> {
-                return false
+                mode = modeNone
             }
 
             MotionEvent.ACTION_CANCEL -> {
-                return false
+                mode = modeNone
             }
             else -> {
                 return false
@@ -155,7 +184,9 @@ class BgView : View {
         val dy = newY - y
         return sqrt(dx * dx + dy * dy)
     }
-
+    
+    //两个坐标的中间点
+    private fun calMiddle(x1: Float, y1: Float, x2: Float, y2: Float) = Pair((x1 + x2) / 2f, (y1 + y2) /2f)
 
     //判断落点是否在图像中内部
     private fun pointInImage(x: Float, y: Float): Boolean {

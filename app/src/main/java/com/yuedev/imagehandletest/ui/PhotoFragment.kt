@@ -1,9 +1,11 @@
 package com.yuedev.imagehandletest.ui
 
+import android.Manifest
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
+import android.os.Build
 import android.os.Bundle
 import android.os.SystemClock
 import android.util.Log
@@ -15,6 +17,7 @@ import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.Toast
 import androidx.core.view.get
+import com.permissionx.guolindev.PermissionX
 import com.yuedev.imagehandletest.R
 import com.yuedev.imagehandletest.savePhotoWithBitmap
 import com.yuedev.imagehandletest.view.StickerView
@@ -36,8 +39,6 @@ class PhotoFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
 
-
-
 //        button.setOnClickListener {
 //            val stickerView = StickerView(requireContext())
 //            val params = FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT, Gravity.CENTER)
@@ -46,13 +47,30 @@ class PhotoFragment : Fragment() {
 //        }
 
 
-//        buttonSave.setOnClickListener {
-//            saveBitmap()
-//        }
+        buttonSave.setOnClickListener {
+            getPermissionAndSavePhoto()
+        }
 
     }
 
 
+    private fun getPermissionAndSavePhoto() {
+
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
+
+            PermissionX.init(this)
+                .permissions(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                .request { allGranted, grantedList, deniedList ->
+                    if (allGranted) {
+                        saveBitmap()
+                    } else {
+                        Toast.makeText(requireContext(), "没有存储权限 -_-", Toast.LENGTH_SHORT).show()
+                    }
+                }
+        } else {
+            saveBitmap()
+        }
+    }
 
 
     private fun saveBitmap() {
