@@ -228,6 +228,7 @@ class BgView : View {
     }
 
     //计算两个坐标之间的距离
+
     private fun calDis(x: Float, y: Float, newX: Float, newY: Float): Float {
         val dx = newX - x
         val dy = newY - y
