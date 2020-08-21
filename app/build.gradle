@@ -1,6 +1,7 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-kapt'
 
 android {
     compileSdkVersion 29
@@ -37,6 +38,7 @@ android {
 
 dependencies {
     implementation fileTree(dir: "libs", include: ["*.jar"])
+
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     implementation 'androidx.core:core-ktx:1.3.1'
     implementation 'androidx.appcompat:appcompat:1.2.0'
@@ -51,5 +53,7 @@ dependencies {
 
     //权限申请，API28以下存储照片需要写存储权限
     implementation 'com.permissionx.guolindev:permissionx:1.3.0'
+
+    //matisse 选择图片
 
 }

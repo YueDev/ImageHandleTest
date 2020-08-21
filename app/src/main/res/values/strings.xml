@@ -4,5 +4,6 @@
     <string name="button_start">Start</string>
     <string name="lab_main">Stickers</string>
     <string name="lab_photo">ImageHandle</string>
+    <string name="button_save">Save to Galley</string>
 
 </resources>

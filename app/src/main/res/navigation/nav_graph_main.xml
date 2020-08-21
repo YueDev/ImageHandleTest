@@ -22,5 +22,9 @@
         android:id="@+id/photoFragment"
         android:name="com.yuedev.imagehandletest.ui.PhotoFragment"
         android:label="@string/lab_photo"
-        tools:layout="@layout/fragment_photo" />
+        tools:layout="@layout/fragment_photo" >
+        <argument
+            android:name="ImageUri"
+            app:argType="android.net.Uri" />
+    </fragment>
 </navigation>

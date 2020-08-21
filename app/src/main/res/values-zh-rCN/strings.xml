@@ -5,4 +5,5 @@
     <string name="button_start">让我们开始吧</string>
     <string name="lab_main">贴贴图标</string>
     <string name="lab_photo">图片处理</string>
+    <string name="button_save">"保存到相册 "</string>
 </resources>

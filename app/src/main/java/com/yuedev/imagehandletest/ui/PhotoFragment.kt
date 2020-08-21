@@ -2,26 +2,33 @@ package com.yuedev.imagehandletest.ui
 
 import android.Manifest
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.graphics.Canvas
-import android.graphics.Color
 import android.graphics.Paint
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.SystemClock
 import android.util.Log
-import android.view.Gravity
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.FrameLayout
 import android.widget.Toast
 import androidx.core.view.get
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.permissionx.guolindev.PermissionX
 import com.yuedev.imagehandletest.R
+import com.yuedev.imagehandletest.adapter.StickerAdapter
+import com.yuedev.imagehandletest.bean.Sticker
+import com.yuedev.imagehandletest.getStickers
+import com.yuedev.imagehandletest.loadImageWithUri
 import com.yuedev.imagehandletest.savePhotoWithBitmap
 import com.yuedev.imagehandletest.view.StickerView
 import kotlinx.android.synthetic.main.fragment_photo.*
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.launch
 
 
 class PhotoFragment : Fragment() {
@@ -38,35 +45,89 @@ class PhotoFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        initRecyclerView()
+        initBgView()
+        initView()
 
-//        button.setOnClickListener {
-//            val stickerView = StickerView(requireContext())
-//            val params = FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT, Gravity.CENTER)
-//            stickerView.layoutParams = params
-//            workSpaceLayout.addView(stickerView)
-//        }
+    }
 
 
-        buttonSave.setOnClickListener {
+    private fun initRecyclerView() {
+
+        stickerRecyclerView.layoutManager =
+            LinearLayoutManager(requireContext(), RecyclerView.HORIZONTAL, false)
+
+        val adapter = StickerAdapter {
+            val sticker = getStickers()[it]
+            addSticker(sticker)
+        }
+
+        stickerRecyclerView.adapter = adapter
+
+        adapter.submitList(getStickers())
+
+    }
+
+
+    private fun initBgView() {
+        val imgUri = arguments?.getParcelable<Uri>("imageUri") ?: return
+
+        //uri加载图片google推荐在io线程
+        MainScope().launch {
+
+            progressBar.visibility = View.VISIBLE
+            val imageBitmap = loadImageWithUri(requireContext(), imgUri)
+            bgView.setImageBitmap(imageBitmap)
+            progressBar.visibility = View.GONE
+
+        }
+    }
+
+
+    private fun initView() {
+        saveButton.setOnClickListener {
             getPermissionAndSavePhoto()
+        }
+    }
+
+
+    private fun addSticker(sticker: Sticker) {
+        val stickerView = StickerView(requireContext())
+        frameLayout.addView(stickerView)
+        val bitmap = BitmapFactory.decodeResource(resources, sticker.imgResId)
+        stickerView.setImageBitmap(bitmap)
+
+
+        stickerView.setRectOnlyOne = {
+            for (i in 1 until frameLayout.childCount) {
+                val view = frameLayout[i] as StickerView
+                if (view != it) view.setShowRect(false)
+            }
+        }
+
+
+        stickerView.setCloseView = {
+            frameLayout.removeView(it)
         }
 
     }
 
 
+    //api28以下要确保存储权限，28以上分区存储不需要权限
     private fun getPermissionAndSavePhoto() {
 
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
 
             PermissionX.init(this)
                 .permissions(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                .request { allGranted, grantedList, deniedList ->
+                .request { allGranted, _, _ ->
                     if (allGranted) {
                         saveBitmap()
                     } else {
                         Toast.makeText(requireContext(), "没有存储权限 -_-", Toast.LENGTH_SHORT).show()
                     }
                 }
+
         } else {
             saveBitmap()
         }
@@ -75,32 +136,24 @@ class PhotoFragment : Fragment() {
 
     private fun saveBitmap() {
 
-//        val bg = Bitmap.createBitmap(bgView.width, bgView.height, Bitmap.Config.ARGB_8888)
-//
-//        val canvas = Canvas(bg)
-//
-//        canvas.drawColor(Color.WHITE)
-//
-//        val paint = Paint(Paint.ANTI_ALIAS_FLAG)
-//
-//        canvas.drawBitmap(bgView.bgBitmap, 0f,0f,paint)
-//
-//        canvas.drawBitmap(bgView.bitmap, bgView.bitmapMatrix, paint)
+        val bg = Bitmap.createBitmap(bgView.width, bgView.height, Bitmap.Config.ARGB_8888)
+
+        val canvas = Canvas(bg)
 
 
-//        repeat(workSpaceLayout.childCount) {
-//            val stickerView = workSpaceLayout[it] as StickerView
-//            val bitmap = stickerView.bitmap
-//            val left = stickerView.point.x - bitmap.width / 2
-//            val top = stickerView.point.y - bitmap.width / 2
-//
-//            canvas.drawBitmap(bitmap, left, top, paint)
-//        }
+        bgView.getResultBitmap(canvas)
 
-//        savePhotoWithBitmap(requireContext(), bg, "newImg_${SystemClock.elapsedRealtime()}") {
-//            Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
-//        }
 
+        for (i in 1 until frameLayout.childCount) {
+            val view = frameLayout[i] as StickerView
+            view.getResultBitmap(canvas)
+        }
+
+        savePhotoWithBitmap(requireContext(), bg, "newImg_${SystemClock.elapsedRealtime()}") {
+            Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
+            bg.recycle()
+        }
     }
+
 
 }
