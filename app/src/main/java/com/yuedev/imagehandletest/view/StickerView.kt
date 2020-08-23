@@ -279,10 +279,12 @@ class StickerView : View {
 
     fun setImageBitmap(imageBitmap: Bitmap) {
 
-        this.imageBitmap = imageBitmap
+
 
         //这里view刚add完，所以要等等
         post {
+
+            this.imageBitmap = imageBitmap
             //边框坐标确定，比图像大一些，space是间距
 
             val w = imageBitmap.width
