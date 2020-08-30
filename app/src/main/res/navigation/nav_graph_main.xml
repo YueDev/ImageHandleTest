@@ -17,7 +17,15 @@
             app:exitAnim="@anim/fragment_open_exit"
             app:popEnterAnim="@anim/fragment_close_enter"
             app:popExitAnim="@anim/fragment_close_exit" />
+        <action
+            android:id="@+id/action_mainFragment_to_testFragment"
+            app:destination="@id/testFragment"
+            app:enterAnim="@anim/fragment_open_enter"
+            app:exitAnim="@anim/fragment_open_exit"
+            app:popEnterAnim="@anim/fragment_close_enter"
+            app:popExitAnim="@anim/fragment_close_exit" />
     </fragment>
+
     <fragment
         android:id="@+id/photoFragment"
         android:name="com.yuedev.imagehandletest.ui.PhotoFragment"
@@ -25,6 +33,14 @@
         tools:layout="@layout/fragment_photo" >
         <argument
             android:name="ImageUri"
+            app:argType="android.net.Uri" />
+    </fragment>
+    <fragment
+        android:id="@+id/testFragment"
+        android:name="com.yuedev.imagehandletest.ui.TestFragment"
+        android:label="TestFragment" >
+        <argument
+            android:name="imageUri"
             app:argType="android.net.Uri" />
     </fragment>
 </navigation>

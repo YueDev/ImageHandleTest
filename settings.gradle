@@ -1,3 +1,2 @@
-include ':matisse'
 include ':app'
 rootProject.name = "Image Handle Test"

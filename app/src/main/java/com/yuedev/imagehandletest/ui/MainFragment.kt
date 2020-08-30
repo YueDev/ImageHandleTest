@@ -28,7 +28,15 @@ class MainFragment : Fragment() {
 
         buttonStart.setOnClickListener {
 
-            loadPhoto()
+            loadPhoto(100)
+
+        }
+
+
+        //测试自定义的手势检测
+        buttonTest.setOnClickListener {
+
+            loadPhoto(101)
 
         }
 
@@ -36,16 +44,15 @@ class MainFragment : Fragment() {
 
 
     //saf读取图片
-    private fun loadPhoto() {
+    private fun loadPhoto(requestCode: Int) {
         val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
             addCategory(Intent.CATEGORY_OPENABLE)
             type = "image/*"
         }
-        startActivityForResult(intent, 100)
+        startActivityForResult(intent, requestCode)
     }
 
 
-    //
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == 100 && resultCode == RESULT_OK) {
@@ -54,7 +61,14 @@ class MainFragment : Fragment() {
                 val bundle = bundleOf("imageUri" to it)
                 findNavController().navigate(R.id.action_mainFragment_to_photoFragment, bundle)
             }
-
         }
+
+        if (requestCode == 101 && resultCode == RESULT_OK) {
+            data?.data?.let {
+                val bundle = bundleOf("imageUri" to it)
+                findNavController().navigate(R.id.action_mainFragment_to_testFragment, bundle)
+            }
+        }
+
     }
 }
