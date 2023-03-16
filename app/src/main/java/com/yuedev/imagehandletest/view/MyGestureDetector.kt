@@ -10,13 +10,14 @@ import kotlin.math.atan2
  * Created by Yue on 2020/8/30.
  * 自定义的手势检测
  * 整合了系统的GestureDetector和ScaleGestureDetector
- * 并简单实现了双指旋转的检测
+ * 简单实现了多指的缩放和旋转
  */
 open class MyGestureDetector(context: Context) {
 
-
     private var beginDegree = 0f
     private var prevDegree = 0f
+
+    private var resetPrevDegree = false
 
     private val gestureListener = object : GestureDetector.SimpleOnGestureListener() {
 
@@ -95,19 +96,31 @@ open class MyGestureDetector(context: Context) {
     private val scaleGestureDetector = ScaleGestureDetector(context, scaleGestureListener)
 
     fun onTouchEvent(e:MotionEvent): Boolean {
-
-        if (e.actionMasked == MotionEvent.ACTION_POINTER_DOWN && e.pointerCount == 2) {
+        if (e.actionMasked == MotionEvent.ACTION_POINTER_DOWN && e.pointerCount > 1 ) {
             beginDegree = calRotation(e.x, e.y, e.getX(1), e.getY(1))
             prevDegree = beginDegree
+            resetPrevDegree = false
         }
 
-        if (e.actionMasked == MotionEvent.ACTION_MOVE && e.pointerCount == 2) {
+        //3指旋转的时候，抬起一个指头，需要把prevDegree角度重置，防止出现角度改变
+        if (e.actionMasked == MotionEvent.ACTION_POINTER_UP && e.pointerCount > 2) {
+            resetPrevDegree = true
+        }
+
+        if (e.actionMasked == MotionEvent.ACTION_MOVE && e.pointerCount > 1 ) {
             val currentDegree = calRotation(e.x, e.y, e.getX(1), e.getY(1))
-            onRotation(beginDegree, prevDegree, currentDegree)
+            if (resetPrevDegree) {
+                prevDegree = currentDegree
+                resetPrevDegree = false
+            }
+            val focusX = (e.getX(1) + e.x) / 2
+            val focusY = (e.getY(1) + e.y) / 2
+            onRotation(beginDegree, prevDegree, currentDegree, focusX, focusY)
             prevDegree = currentDegree
         }
 
-        val b = scaleGestureDetector.onTouchEvent(e)
+
+        val b = e.pointerCount > 1 && scaleGestureDetector.onTouchEvent(e)
 
         return gestureDetector.onTouchEvent(e) || b
     }
@@ -150,8 +163,7 @@ open class MyGestureDetector(context: Context) {
 
     }
 
-    open fun onRotation(beginDegree: Float, prevDegree: Float, currentDegree: Float) {
-
+    open fun onRotation(beginDegree: Float, prevDegree: Float, currentDegree: Float, focusX: Float, focusY: Float) {
     }
 
 
@@ -163,5 +175,7 @@ open class MyGestureDetector(context: Context) {
         val angle = atan2(dy, dx)
         return Math.toDegrees(angle.toDouble()).toFloat()
     }
+
+
 
 }
