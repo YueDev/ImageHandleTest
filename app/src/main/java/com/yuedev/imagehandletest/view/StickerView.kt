@@ -233,7 +233,9 @@ class StickerView : View {
         }
 
 
-        if (isRect) imageMatrix.mapPoints(mapRectPoints, rectPoints)
+        if (isRect) {
+            imageMatrix.mapPoints(mapRectPoints, rectPoints)
+        }
 
 
         invalidate()
@@ -249,20 +251,16 @@ class StickerView : View {
 
             //画矩形和角标
             if (isRect) {
-                rectPath.moveTo(mapRectPoints[0], mapRectPoints[1])
-                rectPath.lineTo(mapRectPoints[2], mapRectPoints[3])
-                rectPath.lineTo(mapRectPoints[6], mapRectPoints[7])
-                rectPath.lineTo(mapRectPoints[4], mapRectPoints[5])
-                rectPath.close()
-                canvas.drawPath(rectPath, rectPaint)
-                rectPath.reset()
+
+                canvas.drawLine(mapRectPoints[0], mapRectPoints[1], mapRectPoints[2], mapRectPoints[3], rectPaint)
+                canvas.drawLine(mapRectPoints[2], mapRectPoints[3], mapRectPoints[6], mapRectPoints[7], rectPaint)
+                canvas.drawLine(mapRectPoints[6], mapRectPoints[7], mapRectPoints[4], mapRectPoints[5], rectPaint)
+                canvas.drawLine(mapRectPoints[4], mapRectPoints[5], mapRectPoints[0], mapRectPoints[1], rectPaint)
 
                 closeMatrix.postTranslate(-closeBitmap.width / 2f, -closeBitmap.height / 2f)
                 closeMatrix.postConcat(imageMatrix)
                 canvas.drawBitmap(closeBitmap, closeMatrix, paint)
                 closeMatrix.reset()
-
-
             }
 
         }
@@ -308,6 +306,8 @@ class StickerView : View {
                 abs(measuredWidth - w) / 2f,
                 abs(measuredHeight - h) / 2f
             )
+
+            imageMatrix.mapPoints(mapRectPoints, rectPoints)
 
             invalidate()
         }
