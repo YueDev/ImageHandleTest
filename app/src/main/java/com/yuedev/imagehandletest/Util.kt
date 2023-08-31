@@ -109,7 +109,7 @@ fun savePhotoWithBitmap(
         //存储也放在IO线程，防止大图片耗时
         val result = withContext(Dispatchers.IO) {
             //use用在closeable对象，可以自动关闭它们
-            resolver.openOutputStream(insertUri).use {
+            resolver.openOutputStream(insertUri)!!.use {
 
                 if (bitmap.compress(Bitmap.CompressFormat.JPEG, 100, it)) {
 

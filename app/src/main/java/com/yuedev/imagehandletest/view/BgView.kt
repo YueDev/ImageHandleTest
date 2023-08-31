@@ -52,7 +52,9 @@ class BgView : View {
 
     private var bgBitmap: Bitmap? = null
 
-    private val paint = Paint(Paint.ANTI_ALIAS_FLAG)
+    private val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        isFilterBitmap = true
+    }
 
     private val imageMatrix = Matrix()
 
@@ -189,14 +191,14 @@ class BgView : View {
     }
 
 
-    override fun onDraw(canvas: Canvas?) {
+    override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
         bgBitmap?.let {
-            canvas?.drawBitmap(it, 0f, 0f, paint)
+            canvas.drawBitmap(it, 0f, 0f, paint)
         }
 
         imageBitmap?.let {
-            canvas?.drawBitmap(it, imageMatrix, paint)
+            canvas.drawBitmap(it, imageMatrix, paint)
         }
 
 

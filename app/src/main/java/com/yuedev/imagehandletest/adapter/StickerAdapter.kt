@@ -3,12 +3,13 @@ package com.yuedev.imagehandletest.adapter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
+import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.yuedev.imagehandletest.R
 import com.yuedev.imagehandletest.bean.Sticker
-import kotlinx.android.synthetic.main.item_sticker.view.*
 
 /**
  * Created by Yue on 2020/8/21.
@@ -44,8 +45,8 @@ class StickerAdapter(private val itemClick: (index: Int) -> Unit) :
 
     class StickerHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
-        private val stickerNameTextView = itemView.stickerNameTextView
-        private val stickerImageView = itemView.stickerImageView
+        private val stickerNameTextView = itemView.findViewById<TextView>(R.id.stickerNameTextView)
+        private val stickerImageView = itemView.findViewById<ImageView>(R.id.stickerImageView)
 
         fun bind(sticker: Sticker) {
 

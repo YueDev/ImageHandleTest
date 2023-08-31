@@ -5,6 +5,7 @@ import android.os.Bundle
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
+import com.yuedev.imagehandletest.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
 
@@ -16,9 +17,13 @@ class MainActivity : AppCompatActivity() {
         AppBarConfiguration(navController.graph)
     }
 
+    private val binding by lazy {
+        ActivityMainBinding.inflate(layoutInflater)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        setContentView(binding.root)
 
         setupActionBarWithNavController(navController, appBarConfig)
 

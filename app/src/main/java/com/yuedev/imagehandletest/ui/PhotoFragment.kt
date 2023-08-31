@@ -4,42 +4,44 @@ import android.Manifest
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Canvas
-import android.graphics.Paint
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.SystemClock
-import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.view.get
+import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.permissionx.guolindev.PermissionX
-import com.yuedev.imagehandletest.R
 import com.yuedev.imagehandletest.adapter.StickerAdapter
 import com.yuedev.imagehandletest.bean.Sticker
+import com.yuedev.imagehandletest.databinding.FragmentPhotoBinding
 import com.yuedev.imagehandletest.getStickers
 import com.yuedev.imagehandletest.loadImageWithUri
 import com.yuedev.imagehandletest.savePhotoWithBitmap
 import com.yuedev.imagehandletest.view.StickerView
-import kotlinx.android.synthetic.main.fragment_photo.*
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 
 
 class PhotoFragment : Fragment() {
 
+    private var _binding: FragmentPhotoBinding? = null
+    // This property is only valid between onCreateView and
+    // onDestroyView.
+    private val binding get() = _binding!!
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_photo, container, false)
+        _binding = FragmentPhotoBinding.inflate(layoutInflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -54,7 +56,7 @@ class PhotoFragment : Fragment() {
 
     private fun initRecyclerView() {
 
-        stickerRecyclerView.layoutManager =
+        binding.stickerRecyclerView.layoutManager =
             LinearLayoutManager(requireContext(), RecyclerView.HORIZONTAL, false)
 
         val adapter = StickerAdapter {
@@ -62,7 +64,7 @@ class PhotoFragment : Fragment() {
             addSticker(sticker)
         }
 
-        stickerRecyclerView.adapter = adapter
+        binding.stickerRecyclerView.adapter = adapter
 
         adapter.submitList(getStickers())
 
@@ -75,17 +77,17 @@ class PhotoFragment : Fragment() {
         //uri加载图片google推荐在io线程
         MainScope().launch {
 
-            progressBar.visibility = View.VISIBLE
+            binding.progressBar.visibility = View.VISIBLE
             val imageBitmap = loadImageWithUri(requireContext(), imgUri)
-            bgView.setImageBitmap(imageBitmap)
-            progressBar.visibility = View.GONE
+            binding.bgView.setImageBitmap(imageBitmap)
+            binding.progressBar.visibility = View.GONE
 
         }
     }
 
 
     private fun initView() {
-        saveButton.setOnClickListener {
+        binding.saveButton.setOnClickListener {
             getPermissionAndSavePhoto()
         }
     }
@@ -93,21 +95,21 @@ class PhotoFragment : Fragment() {
 
     private fun addSticker(sticker: Sticker) {
         val stickerView = StickerView(requireContext())
-        frameLayout.addView(stickerView)
+        binding.frameLayout.addView(stickerView)
         val bitmap = BitmapFactory.decodeResource(resources, sticker.imgResId)
         stickerView.setImageBitmap(bitmap)
 
 
         stickerView.setRectOnlyOne = {
-            for (i in 1 until frameLayout.childCount) {
-                val view = frameLayout[i] as StickerView
+            for (i in 1 until binding.frameLayout.childCount) {
+                val view = binding.frameLayout[i] as StickerView
                 if (view != it) view.setShowRect(false)
             }
         }
 
 
         stickerView.setCloseView = {
-            frameLayout.removeView(it)
+            binding.frameLayout.removeView(it)
         }
 
     }
@@ -136,16 +138,16 @@ class PhotoFragment : Fragment() {
 
     private fun saveBitmap() {
 
-        val bg = Bitmap.createBitmap(bgView.width, bgView.height, Bitmap.Config.ARGB_8888)
+        val bg = Bitmap.createBitmap(binding.bgView.width, binding.bgView.height, Bitmap.Config.ARGB_8888)
 
         val canvas = Canvas(bg)
 
 
-        bgView.getResultBitmap(canvas)
+        binding.bgView.getResultBitmap(canvas)
 
 
-        for (i in 1 until frameLayout.childCount) {
-            val view = frameLayout[i] as StickerView
+        for (i in 1 until binding.frameLayout.childCount) {
+            val view = binding.frameLayout[i] as StickerView
             view.getResultBitmap(canvas)
         }
 
@@ -155,5 +157,9 @@ class PhotoFragment : Fragment() {
         }
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
 
 }

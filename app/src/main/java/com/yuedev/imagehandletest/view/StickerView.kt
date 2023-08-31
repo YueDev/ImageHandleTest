@@ -241,11 +241,11 @@ class StickerView : View {
     }
 
 
-    override fun onDraw(canvas: Canvas?) {
+    override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
 
         imageBitmap?.let {
-            canvas?.drawBitmap(it, imageMatrix, paint)
+            canvas.drawBitmap(it, imageMatrix, paint)
 
             //画矩形和角标
             if (isRect) {
@@ -254,12 +254,12 @@ class StickerView : View {
                 rectPath.lineTo(mapRectPoints[6], mapRectPoints[7])
                 rectPath.lineTo(mapRectPoints[4], mapRectPoints[5])
                 rectPath.close()
-                canvas?.drawPath(rectPath, rectPaint)
+                canvas.drawPath(rectPath, rectPaint)
                 rectPath.reset()
 
                 closeMatrix.postTranslate(-closeBitmap.width / 2f, -closeBitmap.height / 2f)
                 closeMatrix.postConcat(imageMatrix)
-                canvas?.drawBitmap(closeBitmap, closeMatrix, paint)
+                canvas.drawBitmap(closeBitmap, closeMatrix, paint)
                 closeMatrix.reset()
 
 

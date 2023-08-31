@@ -10,23 +10,29 @@ import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.navigation.fragment.findNavController
 import com.yuedev.imagehandletest.R
-import kotlinx.android.synthetic.main.fragment_main.*
+import com.yuedev.imagehandletest.databinding.FragmentMainBinding
 
 
 class MainFragment : Fragment() {
+
+    private var _binding: FragmentMainBinding? = null
+    // This property is only valid between onCreateView and
+    // onDestroyView.
+    private val binding get() = _binding!!
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_main, container, false)
+        _binding = FragmentMainBinding.inflate(layoutInflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        buttonStart.setOnClickListener {
+        binding.buttonStart.setOnClickListener {
 
             loadPhoto(100)
 
@@ -34,7 +40,7 @@ class MainFragment : Fragment() {
 
 
         //测试自定义的手势检测
-        buttonTest.setOnClickListener {
+        binding.buttonTest.setOnClickListener {
 
             loadPhoto(101)
 
@@ -69,6 +75,11 @@ class MainFragment : Fragment() {
                 findNavController().navigate(R.id.action_mainFragment_to_testFragment, bundle)
             }
         }
-
     }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
 }

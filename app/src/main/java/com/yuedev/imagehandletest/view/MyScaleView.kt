@@ -37,7 +37,7 @@ class MyScaleView : View {
 
         override fun onScroll(
             e1: MotionEvent?,
-            e2: MotionEvent?,
+            e2: MotionEvent,
             distanceX: Float,
             distanceY: Float
         ): Boolean {
@@ -47,7 +47,7 @@ class MyScaleView : View {
         }
 
 
-        override fun onScale(detector: ScaleGestureDetector?): Boolean {
+        override fun onScale(detector: ScaleGestureDetector): Boolean {
             detector?.let {
                 imageMatrix.postScale(it.scaleFactor, it.scaleFactor, it.focusX, it.focusY)
                 invalidate()
@@ -57,11 +57,16 @@ class MyScaleView : View {
         }
 
 
-        override fun onRotation(beginDegree: Float, prevDegree: Float, currentDegree: Float) {
-            imageMatrix.postRotate(currentDegree - prevDegree, measuredWidth / 2f, measuredHeight / 2f)
+        override fun onRotation(
+            beginDegree: Float,
+            prevDegree: Float,
+            currentDegree: Float,
+            focusX: Float,
+            focusY: Float
+        ) {
+            imageMatrix.postRotate(currentDegree - prevDegree, focusX, focusY)
             invalidate()
         }
-
     }
 
 
@@ -81,10 +86,10 @@ class MyScaleView : View {
         }
     }
 
-    override fun onDraw(canvas: Canvas?) {
+    override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
         imageBitmap?.let {
-            canvas?.drawBitmap(it, imageMatrix, imagePaint)
+            canvas.drawBitmap(it, imageMatrix, imagePaint)
         }
     }
 

@@ -6,24 +6,26 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import com.yuedev.imagehandletest.R
+import com.yuedev.imagehandletest.databinding.FragmentTestBinding
 import com.yuedev.imagehandletest.loadImageWithUri
-import kotlinx.android.synthetic.main.fragment_test.*
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
-
 
 
 //测试自定义的手势检测
 //MyScaleView以及MyGestureDetctor
 class TestFragment : Fragment() {
 
+    private var _binding: FragmentTestBinding? = null
+    private val binding get() = _binding!!
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_test, container, false)
+        _binding = FragmentTestBinding.inflate(inflater, container,false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -40,13 +42,14 @@ class TestFragment : Fragment() {
 
         MainScope().launch {
             val bitmap = loadImageWithUri(requireContext(), imgUri)
-            scaleView.setImageBitmap(bitmap)
+            binding.scaleView.setImageBitmap(bitmap)
         }
-
-
-
 
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
 
 }
