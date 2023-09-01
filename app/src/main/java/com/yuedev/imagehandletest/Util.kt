@@ -8,7 +8,11 @@ import android.content.ContentValues
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.BitmapShader
+import android.graphics.BlurMaskFilter
 import android.graphics.Matrix
+import android.graphics.RenderEffect
+import android.graphics.Shader
 import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore
@@ -95,6 +99,7 @@ fun savePhotoWithBitmap(
         //API29以上，设置IS_PENDING状态为1，这样存储结束前，其他应用就不会处理这张图片
         val values = ContentValues().apply {
             put(MediaStore.Images.Media.DISPLAY_NAME, fileName)
+            put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg")
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                 put(MediaStore.Images.Media.IS_PENDING, 1)
             }
@@ -134,6 +139,11 @@ fun savePhotoWithBitmap(
 }
 
 
+
+//这个模糊方法已经过时，需要修改，
+//之前试过paint的BlurMaskFilter，但是只能模糊图片边缘，并且在8.0的sony SO-02上无效（硬件加速/离屏渲染都无效）。
+
+
 //模糊图片的具体方法
 
 // context 上下文对象
@@ -151,11 +161,11 @@ fun blurBitmap(
     blurRadius: Float
 ): Bitmap {
 
-
-    val inputBitmap = Bitmap.createScaledBitmap(bitmap, bitmap.width / 4, bitmap.height / 4, false)
+    val inputBitmap = Bitmap.createScaledBitmap(bitmap, bitmap.width / 2, bitmap.height / 2, false)
 
     // 创建一张渲染后的输出图片
     val outputBitmap = Bitmap.createBitmap(inputBitmap)
+
 
     // 创建RenderScript内核对象
     val rs = RenderScript.create(context)
