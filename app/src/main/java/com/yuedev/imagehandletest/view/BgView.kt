@@ -106,12 +106,10 @@ class BgView : View {
             imageMatrix.reset()
             imageMatrix.setRectToRect(srcRect, dstRect, Matrix.ScaleToFit.CENTER)
 
-
             val blurBitmap = blurBitmap(context, bitmap, bitmap.width, bitmap.height, 25f)
             this.bgBitmap = blurBitmap
             bgMatrix.set(calculateMatrixFill(blurBitmap, measuredWidth, measuredHeight))
             invalidate()
-
         }
     }
 

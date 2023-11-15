@@ -10,6 +10,7 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.BitmapShader
 import android.graphics.BlurMaskFilter
+import android.graphics.Canvas
 import android.graphics.Matrix
 import android.graphics.RenderEffect
 import android.graphics.Shader
@@ -21,6 +22,8 @@ import android.renderscript.Element
 import android.renderscript.RenderScript
 import android.renderscript.ScriptIntrinsicBlur
 import android.util.Log
+import androidx.annotation.RequiresApi
+import com.google.android.material.canvas.CanvasCompat
 import com.yuedev.imagehandletest.bean.Sticker
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
